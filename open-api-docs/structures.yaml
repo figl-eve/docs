@@ -1,0 +1,221 @@
+openapi: 3.0.1
+info:
+  title: Structures
+  description: "Server code for structures"
+  contact:
+    email: figl.eve.notifications@gmail.com
+  license:
+    name: MIT
+    url: http://opensource.org/licenses/MIT
+  version: 0.0.1
+tags:
+- name: Upwell
+  description: Endpoints related to upwell structures
+paths:
+  /upwell:
+    post:
+      tags:
+      - Upwell
+      summary: Add an upwell structure
+      operationId: addCitadel
+      requestBody:
+        description: Upwell Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpwellRequest'
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upwell'
+        405:
+          description: Invalid input
+          content: {}
+  /upwell/{structure-id}:
+    get:
+      tags:
+      - Upwell
+      summary: Get an upwell structure
+      operationId: getCitadel
+      parameters:
+        - name: structure-id
+          in: path
+          description: "UUID that represents the timer you are trying to update"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upwell'
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Pet not found
+          content: {}
+        405:
+          description: Validation exception
+          content: {}
+    put:
+      tags:
+      - Upwell
+      summary: Update an upwell structure
+      operationId: updateCitadel
+      parameters:
+        - name: structure-id
+          in: path
+          description: "UUID that represents the timer you are trying to update"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: No Content
+          content: {}
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Pet not found
+          content: {}
+        405:
+          description: Validation exception
+          content: {}
+    delete:
+      tags:
+      - Upwell
+      summary: Delete an upwell structure
+      operationId: deleteCitadel
+      parameters:
+        - name: structure-id
+          in: path
+          description: "UUID that represents the timer you are trying to update"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: No Content
+          content: {}
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: timer not found
+          content: {}
+        405:
+          description: Validation exception
+          content: {}
+  /upwell/{structure-id}/timers:
+    post:
+      tags:
+      - Timer
+      summary: Add an upwell structure
+      operationId: addUpwellTimer
+      parameters:
+        - name: structure-id
+          in: path
+          description: "UUID that represents the unique unique identifier for the upwell structure"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Timer
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTimerRequest'
+        required: true
+      responses:
+        204:
+          description: No Content
+        405:
+          description: Invalid input
+
+components:
+  schemas:
+    CreateUpwellRequest:
+      required:
+      - system
+      - name
+      - type
+      type: object
+      properties:
+        system:
+          type: string
+          example: 93PI-4
+        name:
+          type: string
+          example: PrizeShinePearl
+        type:
+          type: string
+          enum: [Astrahus, Fortizar, Keepstar, Athanor, Tatara, Raitaru, Azbel, Sotiyo]
+    AddTimerRequest:
+      type: object
+      properties:
+        timer:
+          $ref: '#/components/schemas/Timer'
+    Upwell:
+      required:
+      - system
+      - name
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [Astrahus, Fortizar, Keepstar, Athanor, Tatara, Raitaru, Azbel, Sotiyo]
+        system:
+          type: string
+          example: 93PI-4
+        name:
+          type: string
+          example: PrizeShinePearl
+        state:
+          type: string
+          enum: [full-power, low-power, anchoring, abandoned, destroyed]
+        window:
+          $ref: '#/components/schemas/Window'
+        timer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Timer'
+    Timer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        exit:
+          type: string
+          format: date-time
+        reinforcement:
+          type: string
+          enum: [armor, hull]
+        raw:
+          type: string
+    Window:
+      type: object
+      properties:
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+          
